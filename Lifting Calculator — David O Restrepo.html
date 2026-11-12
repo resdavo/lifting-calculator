@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="color-scheme" content="light dark"/>
+<link rel="icon" href="data:,"/>
+<title>Lifting Calculator — NIOSH, EU, UK & Brazil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6f5;--card:#fff;--ink:#14201e;--muted:#52625e;--line:#d8e0dc;--teal:#0f766e;--teal2:#115e59;--amber:#d97706;--red:#b42318;--redbg:#fef3f2;--green:#067647;--greenbg:#ecfdf3;--amberbg:#fffaeb;--radius:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1514;--card:#17211f;--ink:#eef4f2;--muted:#a7bab4;--line:#2a3a36;--teal:#2dd4bf;--teal2:#5eead4;--redbg:#2a1512;--greenbg:#0d2318;--amberbg:#2a1e08}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Barlow,system-ui,sans-serif;line-height:1.55}
+a{color:var(--teal)} .wrap{max-width:1120px;margin:0 auto;padding:20px 16px 64px}
+h1{font-family:"Barlow Condensed",sans-serif;font-size:clamp(38px,6vw,62px);line-height:.95;margin:6px 0 10px;text-transform:uppercase;letter-spacing:.01em}
+h2{font-family:"Barlow Condensed",sans-serif;font-size:32px;text-transform:uppercase;margin:0 0 8px} h3{margin:0 0 6px;font-size:19px}
+.lede{font-size:19px;color:var(--muted);max-width:760px}
+.notice{border:1px solid var(--amber);background:var(--amberbg);border-radius:12px;padding:12px 14px;font-size:15px;margin:16px 0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.tab{border:1.5px solid var(--line);background:var(--card);color:var(--ink);padding:10px 14px;border-radius:999px;font:inherit;font-weight:700;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+@media(prefers-color-scheme:dark){.tab[aria-selected="true"]{color:#06201c}}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+label{font-weight:700;font-size:14px;display:flex;justify-content:space-between;gap:10px} label output{color:var(--teal);font-variant-numeric:tabular-nums}
+.field{margin-bottom:15px} input[type=number],select{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink);font:inherit}
+.stepper{display:flex;gap:8px;align-items:stretch}.stepper input[type=number]{flex:1 1 auto;min-width:0;text-align:center;font-variant-numeric:tabular-nums;-moz-appearance:textfield;appearance:textfield}.stepper input[type=number]::-webkit-outer-spin-button,.stepper input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.step-btn{flex:0 0 44px;width:44px;min-height:44px;border:1.5px solid var(--teal);background:var(--card);color:var(--teal);border-radius:9px;font:inherit;font-size:22px;font-weight:800;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.step-btn:hover{background:var(--teal);color:#fff}.step-btn:active{background:var(--teal2);border-color:var(--teal2);color:#fff}.step-btn:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+@media(prefers-color-scheme:dark){.step-btn:hover,.step-btn:active{color:#06201c}}
+.hint{font-size:13px;color:var(--muted)} .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.big{font-family:"Barlow Condensed",sans-serif;font-size:56px;line-height:1}
+.verdict{border-radius:12px;padding:14px;font-weight:700;margin:12px 0}
+.verdict.ok{background:var(--greenbg);color:var(--green)} .verdict.warn{background:var(--amberbg);color:var(--amber)} .verdict.bad{background:var(--redbg);color:var(--red)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}@media(max-width:560px){.kpis{grid-template-columns:1fr 1fr}}
+.kpi{border:1px solid var(--line);border-radius:11px;padding:11px}.kpi b{display:block;font-size:24px}.kpi span{font-size:13px;color:var(--muted)}
+.bar-row{display:grid;grid-template-columns:130px 1fr 52px;gap:10px;align-items:center;font-size:14px;margin:7px 0}.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--teal)}
+table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+@media(max-width:640px){.tablewrap{overflow:visible} table,thead,tbody,tr,td{display:block} thead{display:none} tr{border:1px solid var(--line);border-radius:11px;margin-bottom:10px;padding:6px;background:var(--card)} td{border:0;padding:5px 8px} td::before{content:attr(data-l);display:block;font-size:12px;color:var(--muted);text-transform:uppercase;font-weight:700}}
+section{margin-top:38px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:820px){.cols{grid-template-columns:1fr}}
+img.fig{width:100%;border-radius:12px;border:1px solid var(--line);background:#fff}
+ol.steps li,ul.tight li{margin-bottom:8px}
+.tag{display:inline-block;background:var(--amberbg);color:var(--amber);border:1px solid var(--amber);padding:2px 8px;border-radius:99px;font-size:12px;font-weight:800}
+details{border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:10px;background:var(--card)}summary{font-weight:800;cursor:pointer}
+.btn{background:var(--teal);color:#fff;border:0;padding:12px 18px;border-radius:10px;font:inherit;font-weight:800;cursor:pointer}
+.sources{font-size:13.5px;color:var(--muted)} .sources li{margin-bottom:7px;word-break:break-word}
+.tpass{font-weight:800;color:var(--green)} .tfail{font-weight:800;color:var(--red)}
+.same-btn{margin-top:8px;border:1.5px solid var(--teal);background:var(--card);color:var(--teal);padding:8px 12px;border-radius:999px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}.same-btn:hover{background:var(--teal);color:#fff}@media(prefers-color-scheme:dark){.same-btn:hover{color:#06201c}}
+.result-col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.recalc-btn{width:100%;min-height:60px;padding:16px 18px;border:2px solid var(--teal);border-radius:12px;background:var(--teal);color:#fff;font:inherit;font-size:21px;font-weight:800;letter-spacing:.01em;cursor:pointer;line-height:1.2}
+.recalc-btn:hover{background:var(--teal2);border-color:var(--teal2)}
+.recalc-btn:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.recalc-btn.is-highlighted{background:var(--amber);border-color:var(--amber);color:#fff;box-shadow:0 0 0 4px var(--amberbg)}
+@media(prefers-color-scheme:dark){.recalc-btn{color:#06201c}.recalc-btn.is-highlighted{color:#1a1000}}
+.dirty-banner{border:1.5px solid var(--amber);background:var(--amberbg);color:var(--amber);border-radius:10px;padding:12px 14px;font-weight:800;font-size:16px;margin:0 0 14px;text-align:center}
+@media(prefers-color-scheme:dark){.dirty-banner{color:#fbbf24}}
+.result-card.is-dirty .result-body{opacity:.42;filter:grayscale(.7)}
+.result-body{transition:opacity .15s ease}
+@media(prefers-reduced-motion:reduce){.result-body{transition:none}}
+.derived-box{border:1px dashed var(--line);border-radius:9px;padding:10px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums;background:var(--bg)}
+.live-line{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 11px;font-size:14px;font-weight:600;margin:4px 0 15px}
+.ends{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.end-box{border:1px solid var(--line);border-radius:11px;padding:12px}.end-box span.lbl{display:block;font-size:13px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}.end-box b{display:block;font-size:26px;line-height:1.1;margin:4px 0}.end-box .gov{font-size:13px;font-weight:800;color:var(--teal)}.end-box.is-gov{border-color:var(--teal);border-width:1.5px}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body><main class="wrap">
+<h1>Lifting Calculator</h1>
+
+<section style="margin-top:10px">
+
+<div class="tabs" role="tablist" aria-label="Region">
+<button class="tab" data-region="us" aria-selected="true">🇺🇸 United States — OSHA / NIOSH*</button>
+<button class="tab" data-region="eu" aria-selected="false">🇪🇺 European Union †</button>
+<button class="tab" data-region="uk" aria-selected="false">🇬🇧 United Kingdom ‡</button>
+<button class="tab" data-region="br" aria-selected="false">🇧🇷 Brazil §</button>
+</div>
+<p class="hint" id="regionNote"></p>
+
+<div class="tabs" role="group" aria-label="Units" style="margin-top:0">
+<span style="align-self:center;font-weight:700">Units</span>
+<button class="tab" data-units="metric" aria-selected="true">Metric — kg · cm</button>
+<button class="tab" data-units="imperial" aria-selected="false">Imperial — lb · in</button>
+</div>
+
+<div class="grid">
+<div class="card">
+<h3>The lift</h3>
+<div class="field"><label for="load">Load weight <output id="oLoad"></output></label><div class="stepper"><button type="button" class="step-btn" data-target="load" data-dir="-1" aria-label="Decrease load weight">−</button><input type="number" id="load" min="1" max="70" step="0.5" value="15" inputmode="decimal"><button type="button" class="step-btn" data-target="load" data-dir="1" aria-label="Increase load weight">+</button></div><p class="hint" id="loadHint">Actual weight of the object, in kilograms (kg).</p></div>
+<div class="field"><label for="H">Horizontal distance H — body to hands <output id="oH"></output></label><div class="stepper"><button type="button" class="step-btn" data-target="H" data-dir="-1" aria-label="Decrease horizontal distance H">−</button><input type="number" id="H" min="25" max="80" step="1" value="40" inputmode="decimal"><button type="button" class="step-btn" data-target="H" data-dir="1" aria-label="Increase horizontal distance H">+</button></div><p class="hint">From the mid-point between the ankles to the hands. This is the single biggest lever: doubling H roughly halves what you may lift.</p></div>
+<div class="field"><label for="V">Vertical height V — floor to hands at pick-up <output id="oV"></output></label><div class="stepper"><button type="button" class="step-btn" data-target="V" data-dir="-1" aria-label="Decrease vertical height V">−</button><input type="number" id="V" min="0" max="175" step="1" value="50" inputmode="decimal"><button type="button" class="step-btn" data-target="V" data-dir="1" aria-label="Increase vertical height V">+</button></div><p class="hint" id="vHint">Knuckle height (~75 cm) is ideal. Floor-level and overhead picks are penalised.</p></div>
+<div class="field"><label for="Vd">Set-down height — floor to hands at set-down <output id="oVd"></output></label><div class="stepper"><button type="button" class="step-btn" data-target="Vd" data-dir="-1" aria-label="Decrease set-down height">−</button><input type="number" id="Vd" min="0" max="175" step="1" value="100" inputmode="decimal"><button type="button" class="step-btn" data-target="Vd" data-dir="1" aria-label="Increase set-down height">+</button></div><button type="button" class="same-btn" id="sameHeight">Set-down = pick-up</button><p class="hint" id="vdHint">Enter the height where the load is put down. Use the shortcut if it is set down at the same height it was picked up.</p></div>
+<p class="live-line" id="heightSummary" aria-live="polite">—</p>
+<div class="field"><label>Vertical travel D — pick-up to set-down (derived) <output id="oD"></output></label><div class="derived-box" id="dValue">—</div><p class="hint">Worked out automatically as |set-down − pick-up|. Direction is also derived: Up if set-down is higher, Down if lower, Same if equal. At or below 25 cm (about 10 in) the travel multiplier DM stays at 1.00 — no penalty and no bonus.</p><p class="hint" id="destNote"></p></div>
+<div class="field"><label for="A">Twist / asymmetry angle A <output id="oA"></output></label><div class="stepper"><button type="button" class="step-btn" data-target="A" data-dir="-1" aria-label="Decrease twist angle A">−</button><input type="number" id="A" min="0" max="135" step="1" value="0" inputmode="numeric"><button type="button" class="step-btn" data-target="A" data-dir="1" aria-label="Increase twist angle A">+</button></div><p class="hint">How far the load is turned away from straight in front of you. 0° = no twist.</p></div>
+<div class="row2">
+<div class="field"><label for="F">Frequency</label><div class="stepper"><button type="button" class="step-btn" data-target="F" data-dir="-1" aria-label="Decrease frequency">−</button><input type="number" id="F" min="0.2" max="12" step="0.1" value="1" inputmode="decimal"><button type="button" class="step-btn" data-target="F" data-dir="1" aria-label="Increase frequency">+</button></div><p class="hint">Lifts per minute.</p></div>
+<div class="field"><label for="LiftMin">Total individual minutes where lifting occurs per shift</label><div class="stepper"><button type="button" class="step-btn" data-target="LiftMin" data-dir="-1" aria-label="Decrease lifting minutes">−</button><input type="number" id="LiftMin" min="0" max="720" step="1" value="60" inputmode="numeric"><button type="button" class="step-btn" data-target="LiftMin" data-dir="1" aria-label="Increase lifting minutes">+</button></div><p class="hint" id="bandNote"></p></div>
+</div>
+<p class="hint" style="margin:-6px 0 15px">This is the total for the whole shift, not per hour. Add together all the minutes in the shift in which at least one lift happens. Count any minute in which at least one lift happens as one minute of lifting — no matter how many lifts happen in that minute, and no matter how long each lift takes in seconds. Do not count minutes with no lift, and do not add up the seconds. Example: 2 lifts in each of 6 consecutive minutes = enter 6. If lifts happen in minute 1, 2 and 3, then not again until minute 11, enter 4, not 11.</p>
+<div class="field"><label>Length of shift</label><select id="Shift"><option value="8" selected>8 hours</option><option value="10">10 hours</option><option value="12">12 hours</option></select><p class="hint">Used only for the <strong>separate full-shift maximum</strong> estimate in the result, which is re-checked in the 2–8 hour duration band before being scaled to the shift. It does <strong>not</strong> change the recommended weight limit, the Lifting Index, or the maximum lifts in your entered lifting period. <strong>Caution:</strong> the NIOSH equation is validated for work periods up to 8 hours, so results for 10- and 12-hour shifts should be treated with extra caution.</p></div>
+<div class="row2">
+<div class="field"><label>Grip / coupling</label><select id="C"><option value="good" selected>Good — handles, firm grip</option><option value="fair">Fair — bulky, awkward grip</option><option value="poor">Poor — no handles, slippery, floppy</option></select></div>
+<div class="field"><label>Who is lifting?</label><select id="Pop"><option value="general" selected>General adult workforce</option><option value="female">Women (UK/EU reduced guidelines)</option><option value="young">Young / older / returning worker — use extra caution</option></select></div>
+</div>
+<div class="field"><label>US state (US region only)</label><select id="State"><option value="fed">Federal OSHA / no state ergonomics standard</option><option value="wa">Washington (DOSH)</option><option value="ca">California (Cal/OSHA)</option><option value="ny">New York — warehouse work</option><option value="mn">Minnesota — covered warehouses / meatpacking</option><option value="other">Other state-plan state</option></select><p class="hint" id="stateNote"></p></div>
+</div>
+
+<div class="result-col">
+<button type="button" class="recalc-btn" id="recalcBtn">Recalculate</button>
+<div class="card result-card" id="resultCard" aria-live="polite">
+<h3>Result</h3>
+<div class="dirty-banner" id="dirtyBanner" role="status" hidden>Inputs changed — press Recalculate</div>
+<div class="result-body" id="resultBody">
+<p class="hint" id="shiftContext" style="margin-top:0"></p>
+<div class="big"><span id="rwl">—</span> <span id="rwlUnit" style="font-size:22px">kg recommended max</span></div>
+<p class="hint" id="rwlLb"></p>
+<p class="hint" id="rwlDetail"></p>
+<div class="ends" aria-label="Pick-up and set-down recommended limits side by side">
+<div class="end-box" id="endPickupBox"><span class="lbl" id="pickupLbl">Pick-up RWL</span><b id="rwlPickup">—</b><span class="gov" id="govPickup"></span></div>
+<div class="end-box" id="endSetdownBox"><span class="lbl" id="setdownLbl">Set-down RWL</span><b id="rwlSetdown">—</b><span class="gov" id="govSetdown"></span></div>
+</div>
+<div class="verdict" id="verdict">—</div>
+<div class="verdict warn" id="shiftCaution" style="display:none"></div>
+<div class="kpis">
+<div class="kpi"><b id="li">—</b><span>Lifting Index (LI) — load ÷ recommended limit. ≤1.0 is the design goal*</span></div>
+<div class="kpi"><b id="maxLifts">—</b><span id="maxLiftsDesc"><strong>Maximum lifts in the lifting period at this load</strong> — the fastest rate that keeps the index ≤ 1.0 in the duration band for your entered lifting minutes, multiplied by those same minutes</span></div>
+<div class="kpi"><b id="maxLiftsShift">—</b><span id="maxShiftDesc"><strong>Maximum lifts per 8-hour shift at this load</strong> — worked out separately in the full-shift (2–8 hour) duration band, then scaled to the shift; never mixed with the period band above</span></div>
+<div class="kpi"><b id="perShift">—</b><span>Lifts you have <em>scheduled</em> in the lifting work period at the frequency you entered</span></div>
+<div class="kpi"><b id="cum">—</b><span>Total weight moved in that period</span></div>
+</div>
+<p class="hint" id="maxNote"></p>
+<h3 style="margin-top:18px">What is cutting your limit?</h3>
+<p class="hint">Each multiplier starts at 1.00 (ideal) and only goes down. <span id="rwlFormula">RWL = 23 kg × HM × VM × DM × AM × FM × CM.*</span></p>
+<div id="bars"></div>
+<p id="fixTip" style="font-weight:700"></p>
+</div>
+</div>
+</div>
+</div>
+
+<h3 style="margin-top:22px">Same task, four rulebooks</h3>
+<div class="tablewrap"><table><thead><tr><th>Standard</th><th>Basis</th><th>Limit for this task</th><th>Verdict for your load</th></tr></thead><tbody id="compare"></tbody></table></div>
+
+<h3 style="margin-top:26px">Check cases — does the corrected calculator give the right answers?</h3>
+<p class="hint">These cases run through the same maths as the calculator above every time the page loads — including the two operator patterns from the 12-hour shift discussion, the optimal-height case, and the new set-down-height derivation (travel and direction worked out from pick-up and set-down heights). “Expected” is the hand-checked value; the case passes only if the calculator reproduces it.</p>
+<p id="testSummary" style="font-weight:700"></p>
+<div class="tablewrap"><table><thead><tr><th>Case</th><th>Inputs</th><th>Expected</th><th>Calculator gives</th><th>Result</th></tr></thead><tbody id="testResults"></tbody></table></div>
+</section>
+
+<footer><h3>Sources * † ‡ §</h3>
+<ol class="sources">
+<li>* Revised NIOSH Lifting Equation and Applications Manual — load constant 23 kg (51 lb), multipliers HM/VM/DM/AM/FM/CM, Lifting Index interpretation. CDC/NIOSH: <a href="https://www.cdc.gov/niosh/topics/ergonomics/nlecalc.html">cdc.gov/niosh — NIOSH Lifting Equation</a> · OSHA ergonomics &amp; General Duty Clause: <a href="https://www.osha.gov/ergonomics">osha.gov/ergonomics</a></li>
+<li>† Council Directive 90/269/EEC on manual handling of loads: <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex%3A31990L0269">eur-lex.europa.eu</a> · ISO 11228-1:2021, Ergonomics — Manual handling — Part 1 (reference mass 25 kg under ideal conditions): <a href="https://www.iso.org/standard/76820.html">iso.org/standard/76820</a></li>
+<li>‡ Manual Handling Operations Regulations 1992: <a href="https://www.legislation.gov.uk/uksi/1992/2793/made">legislation.gov.uk</a> · HSE manual handling guidance &amp; guideline filter weights, MAC tool, team-lift reductions: <a href="https://www.hse.gov.uk/msd/manual-handling/index.htm">hse.gov.uk/msd/manual-handling</a></li>
+<li>§ Brazil — CLT (Decreto-Lei 5.452/1943), Art. 198 (60 kg ceiling) and Art. 390 (women: 20 kg continuous / 25 kg occasional): <a href="https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452.htm">planalto.gov.br</a> · NR-17 Ergonomics (2021 revision — ergonomic work analysis, no single prescriptive table): Ministério do Trabalho e Emprego, <a href="https://www.gov.br/trabalho-e-emprego/pt-br">gov.br/trabalho-e-emprego</a></li>
+<li>Frequency multipliers are the published NIOSH table values for the selected duration band and vertical zone. When the entered frequency is not itself a listed table value, the next higher listed frequency is used — the conservative direction; values are never rounded down and never interpolated. Limits are checked at both the pick-up (origin) and the set-down (destination) and the lower of the two governs. Standards are summarised — read the full text before making compliance decisions.</li>
+</ol>
+</footer>
+<div style="border:1px solid var(--line);background:var(--card);border-radius:12px;padding:16px 18px;margin:24px 0 0">
+<h3 style="margin-top:0">Disclaimer — please read before using this calculator</h3>
+<p style="font-size:14.5px;margin:0 0 10px">This calculator was created by <strong>David O Restrepo</strong> to the best of his knowledge and abilities, with assistance from <strong>Muse AI</strong>. It is provided free of charge, <strong>“as is,” without any warranty</strong> of any kind, express or implied, including any warranty of accuracy, completeness, or fitness for a particular purpose.</p>
+<p style="font-size:14.5px;margin:0 0 10px">Despite careful checking, this calculator <strong>may contain errors</strong> — in its formulas, tables, conversions, or interpretation of the underlying standards. Its results are estimates based on the published methods cited above. They are <strong>not a substitute</strong> for a professional ergonomic assessment, the advice of a qualified safety professional, or the full text of the applicable standard or regulation. Always verify important results independently and consult the official sources listed above before making workplace, health, safety, or compliance decisions.</p>
+<p style="font-size:14.5px;margin:0"><strong>By using this calculator, you agree that you do so entirely at your own risk and that you assume full responsibility for any decision or action taken based on its results. To the fullest extent permitted by law, by using it you waive and release David O Restrepo from any and all claims, demands, damages, losses, and liabilities of any kind arising out of or in connection with your use of this calculator or reliance on its results.</strong> If you do not agree to these terms, do not use this calculator.</p>
+</div>
+<div style="border:1px solid var(--line);background:var(--card);border-radius:12px;padding:16px 18px;margin:16px 0 0">
+<h3 style="margin-top:0">License &amp; Copyright — MIT License</h3>
+<p style="font-size:14.5px;margin:0 0 10px"><strong>Copyright (c) 2026 David O Restrepo</strong></p>
+<p style="font-size:14.5px;margin:0 0 10px">Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &ldquo;Software&rdquo;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+<p style="font-size:14.5px;margin:0 0 10px">The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+<p style="font-size:14.5px;margin:0">THE SOFTWARE IS PROVIDED &ldquo;AS IS&rdquo;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+</div>
+<p style="color:var(--muted);font-size:14px;margin:16px 0 0">Created by David O Restrepo, using Muse AI</p>
+<p style="color:var(--muted);font-size:14px;margin:6px 0 0">Copyright (c) 2026 David O Restrepo &middot; MIT License</p>
+</main>
+<script>
+var $=function(id){return document.getElementById(id)};
+var region='us';
+var units='metric'; var KG_LB=2.20462, IN_CM=2.54;
+// NIOSH frequency table: rows freq, cols [<=1h V<75, <=1h V>=75, 1-2h V<75, 1-2h V>=75, 2-8h V<75, 2-8h V>=75]
+var FM_TABLE=[[0.2,1,1,0.95,0.95,0.85,0.85],[0.5,0.97,0.97,0.92,0.92,0.81,0.81],[1,0.94,0.94,0.88,0.88,0.75,0.75],[2,0.91,0.91,0.84,0.84,0.65,0.65],[3,0.88,0.88,0.79,0.79,0.55,0.55],[4,0.84,0.84,0.72,0.72,0.45,0.45],[5,0.80,0.80,0.60,0.60,0.35,0.35],[6,0.75,0.75,0.50,0.50,0.27,0.27],[7,0.70,0.70,0.42,0.42,0.22,0.22],[8,0.60,0.60,0.35,0.35,0.18,0.18],[9,0.52,0.52,0.30,0.30,0,0.15],[10,0.45,0.45,0.26,0.26,0,0.13],[11,0.41,0.41,0,0.23,0,0.12],[12,0.37,0.37,0,0.21,0,0.11],[13,0,0.34,0,0,0,0],[14,0,0.31,0,0,0,0],[15,0,0.28,0,0,0,0]];
+function fm(freq,dur,V){if(freq>15)return 0;var row=FM_TABLE[FM_TABLE.length-1];for(var i=0;i<FM_TABLE.length;i++){if(FM_TABLE[i][0]>=freq){row=FM_TABLE[i];break;}}var col=(dur==1?0:dur==2?2:4)+(V>=75?1:0);return row[col+1];}
+var UK_M=[[10,5,0],[20,10,0],[25,15,10],[20,10,5],[10,5,0]]; // rows: above shoulder, shoulder, waist, knuckle, ankle-ish ; cols close/mid/far (approx HSE filter, men)
+var UK_F=[[7,3,0],[13,7,0],[16,10,5],[13,7,3],[7,3,0]];
+function ukLimit(H,V,pop){var hc=H<=30?0:H<=55?1:2;var vr=V>150?0:V>110?1:V>=65?2:V>=30?3:4;var t=pop==='female'?UK_F:UK_M;return t[vr][hc];}
+var NOTES={us:'United States: RWL from the Revised NIOSH Equation (23 kg load constant). OSHA has no weight-limit standard — this is the recognised assessment method behind General Duty Clause enforcement.*',eu:'European Union: Directive 90/269/EEC requires avoiding or reducing manual handling risk; the number shown applies the ISO 11228-1 method with a 25 kg reference mass under ideal conditions (15 kg is commonly applied for a mixed/broader population — select “Women” below to see the effect).†',uk:'United Kingdom: result compares your load with the HSE guideline filter weight for that zone of the body — plus the NIOSH-style index for context. Exceeding a filter weight is not an automatic breach; it means a detailed assessment is required under MHOR 1992.‡',br:'Brazil: the recommended limit follows the same 23 kg ergonomic method used under NR-17 assessments, and is checked separately against the CLT legal ceilings (60 kg men; 20 kg continuous / 25 kg occasional for women). Passing the CLT ceiling does NOT make a lift ergonomically safe.§'};
+var STATES={fed:'Federal baseline applies: NIOSH method + General Duty Clause. Still check your industry-specific OSHA guidance.',wa:'Washington DOSH runs its own plan, publishes a state lifting calculator, and enforces ergonomics rules in high-injury industries — expect scrutiny beyond the federal baseline.',ca:'California: Cal/OSHA §5110 (repetitive motion injuries) requires a program, evaluation and training where such injuries occur; a separate musculoskeletal-injury standard for housekeeping already exists.',ny:'New York: covered warehouses must operate an injury-reduction / ergonomics program under the Warehouse Worker Protection Act, with employee involvement.',mn:'Minnesota: an ergonomics standard covers certain warehouses, meatpacking and refineries — program, assessment and training duties apply.',other:'State-plan states must be at least as protective as federal OSHA and may add duties. Confirm your state plan’s current ergonomics position.'};
+function setUnits(u){
+ if(u===units)return;
+ var toImp=u==='imperial';
+ function cv(id,isLoad){var v=parseFloat($(id).value);var nv=isLoad?(toImp?v*KG_LB:v/KG_LB):(toImp?v/IN_CM:v*IN_CM);return{id:id,v:Math.round(nv*10)/10};}
+ var items=[cv('load',true),cv('H',false),cv('V',false),cv('Vd',false)];
+ var ranges={load:toImp?[2,155,1]:[1,70,0.5],H:toImp?[9.8,31.5,0.5]:[25,80,1],V:toImp?[0,68.9,0.5]:[0,175,1],Vd:toImp?[0,68.9,0.5]:[0,175,1]};
+ items.forEach(function(it){var el=$(it.id),r=ranges[it.id];el.min=r[0];el.max=r[1];el.step=r[2];el.value=Math.min(r[1],Math.max(r[0],it.v));});
+ units=u;
+ document.querySelectorAll('.tab[data-units]').forEach(function(b){b.setAttribute('aria-selected',b.getAttribute('data-units')===u?'true':'false');});
+ calc();
+}
+function durBand(liftMin){return liftMin<=60?1:liftMin<=120?2:8;}
+function vmOf(V){var v=1-0.003*Math.abs(V-75);return Math.max(0,v);}
+function cmOf(C,V){return C==='good'?1:C==='fair'?(V>=75?1:0.95):0.90;}
+function coreCalc(o){
+ var HM=Math.min(1,25/o.H);
+ var Duse, VdRaw, dirUse;
+ if(typeof o.Vd==='number'&&isFinite(o.Vd)){VdRaw=o.Vd; Duse=Math.abs(o.Vd-o.V); dirUse=o.Vd>o.V?'up':(o.Vd<o.V?'down':'same');}
+ else{Duse=o.D||0; VdRaw=o.dir==='up'?o.V+Duse:o.V-Duse; dirUse=Duse===0?'same':o.dir;}
+ var DM=0.82+4.5/Math.max(Duse,25); if(DM>1)DM=1;
+ var AM=1-0.0032*o.A;
+ var Dur=durBand(o.liftMin);
+ var Vd=Math.min(175,Math.max(0,VdRaw));
+ function endMult(Ve,dur,freq){return HM*vmOf(Ve)*DM*AM*fm(freq,dur,Ve)*cmOf(o.C,Ve);}
+ var multO=endMult(o.V,Dur,o.F), multD=endMult(Vd,Dur,o.F);
+ var govDest=multD<multO;
+ var multGov=Math.min(multO,multD);
+ var VeGov=govDest?Vd:o.V;
+ var euRef=o.pop==='female'?15:25;
+ function maxRate(dur){
+  var cand=[0.2,0.5,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],best=0,ref=o.region==='eu'?euRef:23;
+  for(var i=0;i<cand.length;i++){var m=Math.min(endMult(o.V,dur,cand[i]),endMult(Vd,dur,cand[i])); if(m>0&&o.load<=ref*m)best=cand[i];}
+  return best;
+ }
+ var maxFp=maxRate(Dur), maxFs=maxRate(8);
+ return{HM:HM,VM:vmOf(VeGov),DM:DM,AM:AM,FM:fm(o.F,Dur,VeGov),FMo:fm(o.F,Dur,o.V),CM:cmOf(o.C,VeGov),mult:multGov,RWL:23*multGov,RWLo:23*multO,RWLd:23*multD,LI:multGov>0?o.load/(23*multGov):Infinity,Vd:Vd,VdRaw:VdRaw,D:Duse,dir:dirUse,govDest:govDest,Dur:Dur,ukO:ukLimit(o.H,o.V,o.pop),ukD:ukLimit(o.H,Vd,o.pop),ukGov:Math.min(ukLimit(o.H,o.V,o.pop),ukLimit(o.H,Vd,o.pop)),euLim:euRef*multGov,maxFperiod:maxFp,maxPeriod:maxFp>0?Math.floor(maxFp*o.liftMin):0,maxFshift:maxFs,maxShift:maxFs>0?Math.floor(maxFs*60*o.shiftH):0,scheduled:Math.round(o.F*o.liftMin)};
+}
+function calc(){
+ var imp=units==='imperial';
+ var loadD=+$('load').value,HD=+$('H').value,VD=+$('V').value,VdD=+$('Vd').value;
+ var load=imp?loadD/KG_LB:loadD,H=imp?HD*IN_CM:HD,V=imp?VD*IN_CM:VD,VdIn=imp?VdD*IN_CM:VdD,A=+$('A').value,F=parseFloat($('F').value),C=$('C').value,Pop=$('Pop').value,ShiftH=parseInt($('Shift').value,10)||8;
+ var D=Math.abs(VdIn-V), DDisp=Math.abs(VdD-VD);
+ var liftMinRaw=parseFloat($('LiftMin').value); var liftMin=isFinite(liftMinRaw)&&liftMinRaw>0?liftMinRaw:0;
+ var r=coreCalc({load:load,H:H,V:V,Vd:VdIn,A:A,F:F,liftMin:liftMin,C:C,pop:Pop,shiftH:ShiftH,region:region});
+ var Dur=r.Dur, HM=r.HM, VM=r.VM, DM=r.DM, AM=r.AM, FM=r.FM, CM=r.CM, mult=r.mult, RWL=r.RWL, Vd=r.Vd;
+ var LCn=imp?51:23; var RWLn=LCn*mult; var LI=RWLn>0?loadD/RWLn:Infinity;
+ var lifts=r.scheduled;
+ var unitL=imp?' in':' cm'; var fmtH=function(displayVal){return imp?displayVal.toFixed(1)+' in':Math.round(displayVal)+' cm';};
+ $('oLoad').textContent=imp?loadD.toFixed(1)+' lb ('+load.toFixed(1)+' kg)':loadD+' kg ('+(loadD*KG_LB).toFixed(1)+' lb)';$('oH').textContent=imp?HD.toFixed(1)+' in':H+' cm';$('oV').textContent=fmtH(VD);$('oVd').textContent=fmtH(VdD);$('oD').textContent=imp?DDisp.toFixed(1)+' in':Math.round(D)+' cm';$('oA').textContent=A+'°';
+ if($('dValue'))$('dValue').textContent=(imp?DDisp.toFixed(1)+' in':Math.round(D)+' cm')+' · '+(r.dir==='up'?'Up — set-down higher':r.dir==='down'?'Down — set-down lower':'Same height');
+ $('loadHint').textContent=imp?'Actual weight of the object, in pounds (lb).':'Actual weight of the object, in kilograms (kg).';
+ $('vHint').textContent=imp?'Knuckle height (~29.5 in) is ideal. Floor-level and overhead picks are penalised.':'Knuckle height (~75 cm) is ideal. Floor-level and overhead picks are penalised.';
+ if($('vdHint'))$('vdHint').textContent=imp?'Knuckle height (~29.5 in) is ideal for set-down too. Use the shortcut above if it is set down at the same height it was picked up.':'Knuckle height (~75 cm) is ideal for set-down too. Use the shortcut above if it is set down at the same height it was picked up.';
+ $('bandNote').textContent='NIOSH duration band used: '+(Dur==1?'≤ 1 hour (60 minutes or fewer)':Dur==2?'1 to 2 hours (61–120 minutes)':'2 to 8 hours (over 120 minutes)')+'.';
+ $('destNote').textContent='The calculator works out the limit at pick-up and at set-down and uses the lower of the two, as NIOSH requires.';
+ var isEqual=Math.abs(r.RWLo-r.RWLd)<0.001||D===0;
+ var govText=isEqual?'both the same':(r.govDest?'the set-down':'the pick-up');
+ if($('heightSummary'))$('heightSummary').textContent='Pick-up '+fmtH(VD)+' → Set-down '+fmtH(VdD)+' · Travel '+(imp?DDisp.toFixed(1)+' in':Math.round(D)+' cm')+' · Governing: '+govText;
+ // display primary by region
+ var primary=RWL, primaryLabel='NIOSH Recommended Weight Limit (governing — lower of pick-up and set-down)';
+ if(region==='eu'){primary=r.euLim; primaryLabel='ISO 11228-1 recommended limit (governing — lower of pick-up and set-down)';}
+ if(region==='uk'){primary=r.ukGov; primaryLabel='HSE filter weight for this body zone (lower of pick-up and set-down zones)';}
+ if(region==='br'){primary=RWL; primaryLabel='NR-17 ergonomic recommended limit (NIOSH method, governing end)';}
+ var primaryD=(region==='us'||region==='br')?RWLn:(imp?primary*KG_LB:primary);
+ $('rwl').textContent=(region!=='uk'&&FM===0)?'0':primaryD.toFixed(1); $('rwlUnit').textContent=(imp?'lb':'kg')+' recommended max';
+ $('rwlLb').textContent=imp?primaryLabel+' · ≈ '+primary.toFixed(1)+' kg. NIOSH RWL for comparison: '+RWLn.toFixed(1)+' lb ('+RWL.toFixed(1)+' kg).':primaryLabel+' · ≈ '+(primary*KG_LB).toFixed(1)+' lb. NIOSH RWL for comparison: '+RWL.toFixed(1)+' kg.';
+ var fac=LCn/23, wunit=imp?' lb':' kg';
+ $('rwlDetail').textContent='Checked at both ends — pick-up (origin) at '+(imp?(V/IN_CM).toFixed(1)+' in':Math.round(V)+' cm')+': '+(r.RWLo*fac).toFixed(1)+wunit+' · set-down (destination) at '+(imp?(Vd/IN_CM).toFixed(1)+' in':Math.round(Vd)+' cm')+': '+(r.RWLd*fac).toFixed(1)+wunit+' · Governing: '+(isEqual?'both the same':('the '+(r.govDest?'set-down':'pick-up')+', because it is lower'))+'.'+(r.VdRaw!==Vd?' Set-down height falls outside the 0–175 cm range of the equation and was held at the nearest limit.':'')+(region==='uk'?' UK filter at pick-up: '+(imp?(r.ukO*KG_LB).toFixed(1):r.ukO)+wunit+' · at set-down: '+(imp?(r.ukD*KG_LB).toFixed(1):r.ukD)+wunit+' — the lower governs.':'');
+ if($('rwlPickup')){$('pickupLbl').textContent='Pick-up RWL — at '+fmtH(VD); $('setdownLbl').textContent='Set-down RWL — at '+fmtH(VdD); var pickVal=(region==='uk'?r.ukO:r.RWLo*fac), setVal=(region==='uk'?r.ukD:r.RWLd*fac); if(region==='eu'){pickVal=r.RWLo/23*(Pop==='female'?15:25)*(imp?KG_LB:1); setVal=r.RWLd/23*(Pop==='female'?15:25)*(imp?KG_LB:1);} else if(region==='uk'&&imp){pickVal=r.ukO*KG_LB; setVal=r.ukD*KG_LB;} $('rwlPickup').textContent=(FM===0&&region!=='uk'?'0':pickVal.toFixed(1))+(imp?' lb':' kg'); $('rwlSetdown').textContent=(FM===0&&region!=='uk'?'0':setVal.toFixed(1))+(imp?' lb':' kg'); var govEq=Math.abs(pickVal-setVal)<0.05; $('govPickup').textContent=govEq?'Both the same — governs':'';
+ $('govSetdown').textContent=govEq?'Both the same — governs':'';
+ if(!govEq){ if(pickVal<setVal){$('govPickup').textContent='Governing — lower'; $('govSetdown').textContent='Higher';} else {$('govSetdown').textContent='Governing — lower'; $('govPickup').textContent='Higher';} }
+ $('endPickupBox').className='end-box'+((!govEq&&pickVal<setVal)||govEq?' is-gov':''); $('endSetdownBox').className='end-box'+((!govEq&&setVal<pickVal)||govEq?' is-gov':''); }
+ $('rwlFormula').textContent=imp?'RWL = 51 lb × HM × VM × DM × AM × FM × CM, at the governing end.*':'RWL = 23 kg × HM × VM × DM × AM × FM × CM, at the governing end.*';
+ var v=$('verdict'); var effLI=(region==='us'||region==='br')?LI:(primary>0?load/primary:Infinity);
+ if(region==='uk'){
+  if(primary===0){v.className='verdict bad';v.textContent='⛔ No safe filter weight in this body zone at one end of the lift — redesign the job.';}
+  else if(effLI<=1){v.className='verdict ok';v.textContent='✅ Within the HSE filter weight for the selected standard — keep technique, monitoring and reporting in place.';}
+  else if(effLI<=3){v.className='verdict warn';v.textContent='⚠️ Above the HSE filter weight (index '+effLI.toFixed(2)+'). Exceeding a filter weight means a detailed assessment is required — reduce weight or distance, or add an aid, then re-check.';}
+  else{v.className='verdict bad';v.textContent='⛔ Well above the HSE filter weight (index '+effLI.toFixed(2)+'). Do not run it as designed; mechanise or split the load.';}
+  if(FM===0)v.textContent+=' Note: at this frequency and duration the NIOSH frequency multiplier is 0, so the NIOSH equation gives no limit at all — the UK filter weight above is a separate HSE guideline and is not wiped out by that.';
+ } else if(FM===0){v.className='verdict bad';v.textContent='⛔ This frequency cannot be sustained for this duration under the NIOSH table (frequency multiplier = 0). Redesign the job — mechanise, rotate workers, or slow the rate.';}
+ else if(effLI<=1){v.className='verdict ok';v.textContent='✅ Within the recommended limit for the selected standard — keep technique, monitoring and reporting in place.';}
+ else if(effLI<=3){v.className='verdict warn';v.textContent='⚠️ Above the recommended limit (index '+effLI.toFixed(2)+'). Risk rises with the index — reduce weight, distance or frequency, or add an aid, then re-check.';}
+ else{v.className='verdict bad';v.textContent='⛔ Well above the recommended limit (index '+effLI.toFixed(2)+'). NIOSH treats LI > 3 as a high-risk job for most workers — do not run it as designed; mechanise or split the load.';}
+ if(region==='br'){var cap=Pop==='female'?20:60; if(load>cap){v.className='verdict bad';v.textContent='⛔ Exceeds the CLT legal ceiling of '+(imp?(cap*KG_LB).toFixed(1)+' lb':cap+' kg')+' for this population — before ergonomics are even considered. (§ Art. 198 / Art. 390)';}}
+ $('li').textContent=isFinite(LI)?LI.toFixed(2):'—'; $('perShift').textContent=lifts.toLocaleString(); $('cum').textContent=imp?Math.round(lifts*load*KG_LB).toLocaleString()+' lb':(lifts*load).toLocaleString()+' kg';
+ $('shiftContext').textContent='Shift length: '+ShiftH+' hours · Lifting minutes entered: '+liftMin+' · NIOSH duration band for those minutes: '+(Dur==1?'≤ 1 hour':Dur==2?'1 to 2 hours':'2 to 8 hours')+'. Shift length sets only the separate full-shift maximum — it does not change the recommended limit, the Lifting Index, or the maximum for your entered lifting period.';
+ var sc=$('shiftCaution'); if(ShiftH>8){sc.style.display='block';sc.textContent='⚠️ '+ShiftH+'-hour shift: the NIOSH equation is validated for work periods up to 8 hours. Treat the results for a '+ShiftH+'-hour shift with extra caution.';}else{sc.style.display='none';sc.textContent='';}
+ var bandLabel=Dur==1?'≤ 1 hour':Dur==2?'1–2 hour':'2–8 hour';
+ $('maxLiftsDesc').innerHTML='<strong>Maximum lifts in the lifting period at this load</strong> — the fastest rate that keeps the index ≤ 1.0 in the '+bandLabel+' band for your entered minutes, multiplied by those same '+liftMin+' minutes';
+ $('maxShiftDesc').innerHTML='<strong>Maximum lifts per '+ShiftH+'-hour shift at this load</strong> — worked out separately in the full-shift (2–8 hour) band, then multiplied by the shift ('+ShiftH+' × 60 minutes); the two bands are never mixed';
+ if(region==='uk'){$('maxLifts').textContent= r.ukGov>=load?'No count limit':'0'; $('maxLiftsShift').textContent= r.ukGov>=load?'No count limit':'0';}
+ else{
+  $('maxLifts').textContent= r.maxFperiod>0? r.maxPeriod.toLocaleString()+' (≤'+r.maxFperiod+'/min)':'0 — too heavy at any rate';
+  $('maxLiftsShift').textContent= r.maxFshift>0? r.maxShift.toLocaleString()+' (≤'+r.maxFshift+'/min)':'0 — too heavy at any rate';
+ }
+ var mults=[['Horizontal (H)',HM],['Vertical (V)',VM],['Travel distance (D)',DM],['Twist (A)',AM],['Frequency (F)',FM],['Grip (C)',CM]];
+ $('bars').innerHTML=mults.map(function(m){return '<div class="bar-row"><span>'+m[0]+'</span><span class="bar"><i style="width:'+Math.round(m[1]*100)+'%"></i></span><b>'+m[1].toFixed(2)+'</b></div>'}).join('');
+ var worst=mults.slice().sort(function(a,b){return a[1]-b[1]})[0];
+ $('fixTip').textContent= worst[1]>=0.99?'No single factor is hurting you — the job is close to ideal geometry.':'Biggest single fix: '+worst[0]+' (×'+worst[1].toFixed(2)+', at the governing end). Improve that first and re-run the numbers.';
+ $('maxNote').textContent= region==='uk' ? 'Note on lift counts: the UK HSE filter sets a weight guideline per body zone, not a numeric lifts-per-shift limit — repetition is handled in the fuller MAC assessment, so no authorised maximum count exists to show. The filter weight above is the lower of the pick-up and set-down zones, and it stands even when the NIOSH frequency multiplier is 0. The NIOSH index above still signals repetition risk.' : 'How the two maximums are found — they are kept strictly separate. Maximum in the lifting period: the calculator re-runs the equation at every published frequency in the band that matches your entered lifting minutes ('+bandLabel+'), keeps the fastest rate at which your load still stays at or under the limit at both ends of the lift, and multiplies that rate by the same entered minutes ('+liftMin+'). Maximum per shift: the same search is run again in the 2–8 hour band — the band for lifting sustained across a whole shift — and only then multiplied by the shift length ('+ShiftH+' hours × 60). No standard publishes a standalone “lifts per shift” number; both figures are consequences of weight × geometry × frequency × duration, which is why they change when any of them changes.';
+ $('regionNote').textContent=NOTES[region]; $('stateNote').textContent=STATES[$('State').value];
+ // comparison table
+ var euLim=r.euLim, ukL=r.ukGov;
+ var cltCeil=Pop==='female'?(imp?'44.1 lb cont.':'20 kg cont.'):(imp?'132.3 lb':'60 kg');
+ var rows=[
+  ['US — OSHA / NIOSH*','RWL = '+(imp?'51 lb':'23 kg')+' × multipliers, lower of origin & destination',RWL, LI, RWLn],
+  ['EU — ISO 11228-1 †','Reference mass '+(imp?((Pop==='female'?15:25)*KG_LB).toFixed(1)+' lb':(Pop==='female'?'15':'25')+' kg')+' × same task factors, governing end',euLim, euLim>0?load/euLim:Infinity, imp?euLim*KG_LB:euLim],
+  ['UK — HSE filter ‡','Guideline weight, lower of pick-up & set-down zones (no frequency factor)',ukL, ukL>0?load/ukL:Infinity, imp?ukL*KG_LB:ukL],
+  ['Brazil — NR-17 / CLT §','NIOSH-method limit (governing end); CLT ceiling '+cltCeil+' checked separately',RWL, LI, RWLn]];
+ $('compare').innerHTML=rows.map(function(rw){var verdictTxt=rw[2]===0||rw[3]>1?'<strong style="color:var(--red)">Exceeds — assess / redesign</strong>':'<strong style="color:var(--green)">Within</strong>'; if(rw[2]===0&&rw[0].indexOf('UK')===0)verdictTxt='<strong style="color:var(--red)">No safe filter weight in this zone</strong>'; if(rw[2]===0&&rw[0].indexOf('UK')!==0)verdictTxt='<strong style="color:var(--red)">No sustainable rate — redesign</strong>'; return '<tr><td data-l="Standard"><strong>'+rw[0]+'</strong></td><td data-l="Basis">'+rw[1]+'</td><td data-l="Limit">'+(rw[2]?(rw[4]!==undefined?rw[4]:(imp?rw[2]*KG_LB:rw[2])).toFixed(1)+(imp?' lb':' kg'):'—')+'</td><td data-l="Verdict">'+verdictTxt+' (index '+(isFinite(rw[3])?rw[3].toFixed(2):'—')+')</td></tr>'}).join('');
+}
+function runTests(){
+ var base={load:15,H:40,V:50,D:50,dir:'up',A:0,F:1,liftMin:60,C:'good',pop:'general',shiftH:8,region:'us'};
+ function withP(patch){var o={};for(var k in base)o[k]=base[k];for(var k2 in patch)o[k2]=patch[k2];return coreCalc(o);}
+ var cases=[
+  {name:'Default case — unchanged',inputs:'15 kg · H 40 cm · V 50 cm · D 50 cm up · 1/min · 60 lifting min',run:function(){return withP({});},checks:[['RWL',11.4,function(r){return r.RWL;},0.15,1],['LI',1.32,function(r){return r.LI;},0.02,2]]},
+  {name:'Maximum lifts — period and shift no longer mixed',inputs:'10 kg · default geometry · 60 lifting min · 8 h shift',run:function(){return withP({load:10});},checks:[['Max in 60-min period',240,function(r){return r.maxPeriod;},0.5,0],['Max per 8 h shift (2–8 h band)',96,function(r){return r.maxShift;},0.5,0]]},
+  {name:'Destination governs — tall upward lift',inputs:'15 kg · V 50 cm · D 100 cm up (set-down at 150 cm)',run:function(){return withP({D:100});},checks:[['Pick-up RWL',10.8,function(r){return r.RWLo;},0.2,1],['Governing RWL',9.1,function(r){return r.RWL;},0.2,1]]},
+  {name:'Fractional frequency — next table row up, never down',inputs:'1.9 lifts/min (uses the 2/min row) · default geometry',run:function(){return withP({F:1.9});},checks:[['FM',0.91,function(r){return r.FMo;},0.005,2],['RWL',11.0,function(r){return r.RWL;},0.15,1]]},
+  {name:'UK filter survives FM = 0',inputs:'9/min · 180 lifting min (2–8 h band, FM = 0) · default geometry',run:function(){return withP({F:9,liftMin:180});},checks:[['FM',0,function(r){return r.FMo;},0.005,2],['NIOSH RWL',0,function(r){return r.RWL;},0.05,1],['UK filter',10,function(r){return r.ukGov;},0.5,0]]},
+  {name:'Operator A — spread-out bouts, 12 h shift',inputs:'15 kg · default geometry · 2/min · 120 lifting min · 240 lifts per shift',run:function(){return withP({F:2,liftMin:120,shiftH:12});},checks:[['FM',0.84,function(r){return r.FMo;},0.005,2],['RWL',10.2,function(r){return r.RWL;},0.15,1],['LI',1.48,function(r){return r.LI;},0.02,2],['Lifts scheduled',240,function(r){return r.scheduled;},0.5,0]]},
+  {name:'Operator B — same 240 lifts, bunched tighter',inputs:'15 kg · default geometry · 3/min · 80 lifting min · 240 lifts per shift',run:function(){return withP({F:3,liftMin:80,shiftH:12});},checks:[['FM',0.79,function(r){return r.FMo;},0.005,2],['RWL',9.6,function(r){return r.RWL;},0.15,1],['LI',1.57,function(r){return r.LI;},0.02,2],['Lifts scheduled',240,function(r){return r.scheduled;},0.5,0]]},
+  {name:'Optimal height, travel under 6 in — Operator A rate',inputs:'15 kg · H 25 cm · V 75 cm · D 0 cm · 2/min · 120 lifting min',run:function(){return withP({H:25,V:75,D:0,F:2,liftMin:120,shiftH:12});},checks:[['RWL',19.3,function(r){return r.RWL;},0.15,1],['LI',0.78,function(r){return r.LI;},0.02,2]]},
+  {name:'Optimal height, travel under 6 in — Operator B rate',inputs:'15 kg · H 25 cm · V 75 cm · D 0 cm · 3/min · 80 lifting min',run:function(){return withP({H:25,V:75,D:0,F:3,liftMin:80,shiftH:12});},checks:[['RWL',18.2,function(r){return r.RWL;},0.15,1],['LI',0.82,function(r){return r.LI;},0.02,2]]},
+  {name:'Set-down = pick-up — travel derives to 0',inputs:'15 kg · H 25 cm · pick-up 75 cm · set-down 75 cm · 1/min · 60 lifting min',run:function(){return withP({H:25,V:75,Vd:75,F:1,liftMin:60});},checks:[['Travel D',0,function(r){return r.D;},0.01,0],['RWL',21.6,function(r){return r.RWL;},0.15,1],['LI',0.69,function(r){return r.LI;},0.02,2]]},
+  {name:'Set-down height derives upward travel',inputs:'15 kg · default H/A · pick-up 50 cm · set-down 150 cm (travel 100 cm up)',run:function(){return withP({V:50,Vd:150});},checks:[['Travel D',100,function(r){return r.D;},0.5,0],['Governing RWL',9.1,function(r){return r.RWL;},0.2,1]]},
+  {name:'Verify example — 30 in to 30 in, 49.6 lb load',inputs:'22.5 kg · H 25.4 cm · pick-up 76.2 cm · set-down 76.2 cm · 1/min · 40 lifting min',run:function(){return withP({load:22.5,H:25.4,V:76.2,Vd:76.2,F:1,liftMin:40});},checks:[['Travel D',0,function(r){return r.D;},0.01,0],['RWL kg',21.2,function(r){return r.RWL;},0.3,1],['LI',1.06,function(r){return r.LI;},0.03,2]]}
+ ];
+ var passed=0, html='';
+ cases.forEach(function(c){
+  var r=c.run(), ok=true, exp=[], act=[];
+  c.checks.forEach(function(ch){var val=ch[2](r); if(Math.abs(val-ch[1])>ch[3])ok=false; exp.push(ch[0]+' '+ch[1].toFixed(ch[4])); act.push(ch[0]+' '+(isFinite(val)?val.toFixed(ch[4]):'—'));});
+  if(ok)passed++;
+  html+='<tr><td data-l="Case"><strong>'+c.name+'</strong></td><td data-l="Inputs">'+c.inputs+'</td><td data-l="Expected">'+exp.join(' · ')+'</td><td data-l="Calculator gives">'+act.join(' · ')+'</td><td data-l="Result"><span class="'+(ok?'tpass':'tfail')+'">'+(ok?'PASS':'FAIL')+'</span></td></tr>';
+ });
+ $('testResults').innerHTML=html;
+ $('testSummary').textContent=passed+' of '+cases.length+' check cases pass.';
+}
+document.querySelectorAll('.tab[data-region]').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.tab[data-region]').forEach(function(x){x.setAttribute('aria-selected','false')});b.setAttribute('aria-selected','true');region=b.getAttribute('data-region');recalculateNow();})});
+document.querySelectorAll('.tab[data-units]').forEach(function(b){b.addEventListener('click',function(){var prevUnits=units;setUnits(b.getAttribute('data-units'));if(units!==prevUnits)setDirty(false);})});
+function clampField(el){if(!el)return;var v=parseFloat(el.value);if(!isFinite(v))return;var mn=parseFloat(el.min),mx=parseFloat(el.max);if(isFinite(mn)&&v<mn)v=mn;if(isFinite(mx)&&v>mx)v=mx;var dec=(String(el.step).split('.')[1]||'').length;el.value=dec?String(parseFloat(v.toFixed(dec))):String(Math.round(v));}
+function stepField(id,dir){var el=$(id);if(!el)return;var st=parseFloat(el.step)||1;var cur=parseFloat(el.value);if(!isFinite(cur))cur=parseFloat(el.min)||0;var nv=cur+dir*st;var mn=parseFloat(el.min),mx=parseFloat(el.max);if(isFinite(mn)&&nv<mn)nv=mn;if(isFinite(mx)&&nv>mx)nv=mx;var dec=(String(el.step).split('.')[1]||'').length;el.value=dec?parseFloat(nv.toFixed(dec)).toString():String(Math.round(nv));el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));recalculateNow();}
+document.querySelectorAll('.step-btn').forEach(function(b){b.addEventListener('click',function(){stepField(b.getAttribute('data-target'),parseInt(b.getAttribute('data-dir'),10));});});
+var TYPED_IDS=['load','H','V','Vd','A','F','LiftMin'];
+var liveTimer=null;
+function setDirty(d){var card=$('resultCard'),btn=$('recalcBtn'),banner=$('dirtyBanner');if(card)card.classList.toggle('is-dirty',!!d);if(btn)btn.classList.toggle('is-highlighted',!!d);if(banner)banner.hidden=!d;}
+function fieldsValid(){for(var i=0;i<TYPED_IDS.length;i++){var el=$(TYPED_IDS[i]);if(!el)return false;var raw=String(el.value).trim();if(raw===''||raw==='-'||raw==='.'||raw==='-.')return false;if(!isFinite(parseFloat(raw)))return false;}return true;}
+function recalculateNow(){if(liveTimer){clearTimeout(liveTimer);liveTimer=null;}TYPED_IDS.forEach(function(id){clampField($(id));});if(!fieldsValid()){setDirty(true);return false;}calc();setDirty(false);return true;}
+function scheduleLiveCalc(){if(liveTimer)clearTimeout(liveTimer);liveTimer=setTimeout(function(){liveTimer=null;if(fieldsValid()){calc();setDirty(false);}},450);}
+TYPED_IDS.forEach(function(id){var el=$(id);if(!el)return;el.addEventListener('input',function(){setDirty(true);scheduleLiveCalc();});el.addEventListener('change',function(){recalculateNow();});el.addEventListener('blur',function(){recalculateNow();});});
+['C','Pop','State','Shift'].forEach(function(id){var el=$(id);if(!el)return;el.addEventListener('input',function(){setDirty(true);recalculateNow();});el.addEventListener('change',function(){setDirty(true);recalculateNow();});});
+var recalcBtn=$('recalcBtn'); if(recalcBtn)recalcBtn.addEventListener('click',function(){recalculateNow();});
+var sameBtn=$('sameHeight'); if(sameBtn)sameBtn.addEventListener('click',function(){$('Vd').value=$('V').value; recalculateNow();});
+calc();setDirty(false);runTests();
+</script>
+</body></html>
